@@ -58,7 +58,7 @@ export default async function AdminPage({
 
   return (
     <main className="container mx-auto py-8 px-4">
-      <div className="flex justify-between items-center mb-8">
+      <div className="lg:flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Panel de Administración</h1>
         <div className="flex gap-2">
           <Button asChild variant="outline">
@@ -67,9 +67,9 @@ export default async function AdminPage({
           <Button asChild>
             <Link href="/admin/vender">Vender Boleto</Link>
           </Button>
-          <Button asChild variant="outline">
+          {/* <Button asChild variant="outline">
             <Link href="/admin/initialize">Inicializar Boletos</Link>
-          </Button>
+          </Button> */}
         </div>
       </div>
 
