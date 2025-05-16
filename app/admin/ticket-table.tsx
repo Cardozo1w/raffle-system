@@ -118,7 +118,7 @@ export default function AdminTicketTable({ initialData }: {initialData: any}) {
               <TableHead>Nombre</TableHead>
               <TableHead>Teléfono</TableHead>
               <TableHead>Fecha</TableHead>
-              <TableHead>Acciones</TableHead>
+              {/* <TableHead>Acciones</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -128,7 +128,7 @@ export default function AdminTicketTable({ initialData }: {initialData: any}) {
                 <TableCell>{ticket.name}</TableCell>
                 <TableCell>{ticket.phone}</TableCell>
                 <TableCell>{ticket.sold_date ? new Date(ticket.sold_date).toLocaleDateString() : "-"}</TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <Button
                     variant="destructive"
                     size="sm"
@@ -137,7 +137,7 @@ export default function AdminTicketTable({ initialData }: {initialData: any}) {
                   >
                     Eliminar
                   </Button>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
             {paginatedTickets.length === 0 && (
