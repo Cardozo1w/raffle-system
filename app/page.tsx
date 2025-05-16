@@ -1,9 +1,17 @@
-import { Suspense } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import TicketGrid from "@/components/ticket-grid"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Suspense } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import TicketGrid from "@/components/ticket-grid";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { getPaginatedTickets } from "@/lib/actions";
+import TicketGridClient from "@/components/ticket-grid-client";
 
 // Información de la rifa como un objeto configurable
 const raffleConfig = {
@@ -16,11 +24,17 @@ const raffleConfig = {
   imageUrl: "/dji.jpg",
   totalTickets: 1000,
   pageSize: 100,
-}
+};
 
-export default async function Home({ searchParams }: {searchParams: any}) {
-  const searchParamsValue = await searchParams
+export default async function Home({ searchParams }: { searchParams: any }) {
+  const searchParamsValue = await searchParams;
   const page = Number.parseInt(searchParamsValue.page) || 1;
+
+  const initialData = await getPaginatedTickets(
+    page,
+    raffleConfig.pageSize,
+    raffleConfig.id
+  );
 
   return (
     <main className="container mx-auto py-8 px-4">
@@ -35,7 +49,9 @@ export default async function Home({ searchParams }: {searchParams: any}) {
         <Card className="overflow-hidden">
           <div className="relative w-full h-64">
             <Image
-              src={raffleConfig.imageUrl || "/placeholder.svg?height=256&width=512"}
+              src={
+                raffleConfig.imageUrl || "/placeholder.svg?height=256&width=512"
+              }
               alt="Premio de la rifa"
               fill
               className="object-cover"
@@ -44,7 +60,9 @@ export default async function Home({ searchParams }: {searchParams: any}) {
           </div>
           <CardHeader>
             <CardTitle>{raffleConfig.title}</CardTitle>
-            <CardDescription>Precio por boleto: {raffleConfig.price}</CardDescription>
+            <CardDescription>
+              Precio por boleto: {raffleConfig.price}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="mb-4">{raffleConfig.description}</p>
@@ -58,14 +76,14 @@ export default async function Home({ searchParams }: {searchParams: any}) {
         <Card>
           <CardHeader>
             <CardTitle>Boletos Disponibles</CardTitle>
-            <CardDescription>Visualiza todos los boletos y su estado actual</CardDescription>
+            <CardDescription>
+              Visualiza todos los boletos y su estado actual
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Suspense fallback={<div>Cargando boletos...</div>}>
-              <TicketGrid
-                page={page}
-                pageSize={raffleConfig.pageSize}
-                raffleId={raffleConfig.id}
+              <TicketGridClient
+                initialData={initialData}
                 showOwnerInfo={false} // No mostrar información del comprador en la vista pública
               />
             </Suspense>
@@ -73,5 +91,5 @@ export default async function Home({ searchParams }: {searchParams: any}) {
         </Card>
       </div>
     </main>
-  )
+  );
 }
