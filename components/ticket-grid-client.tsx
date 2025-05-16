@@ -67,6 +67,44 @@ export default function TicketGridClient({
 
   return (
     <div id="ticket-grid-container" className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-muted-foreground">
+          Mostrando{" "}
+          {data.pagination.currentPage * data.pagination.pageSize -
+            data.pagination.pageSize +
+            1}{" "}
+          a{" "}
+          {Math.min(
+            data.pagination.currentPage * data.pagination.pageSize,
+            data.pagination.total
+          )}{" "}
+          de {data.pagination.total} boletos
+        </div>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="outline"
+            size="icon"
+            disabled={data.pagination.currentPage <= 1 || isLoading}
+            onClick={() => changePage(data.pagination.currentPage - 1)}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span className="text-sm mx-2">
+            Página {data.pagination.currentPage} de {data.pagination.totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="icon"
+            disabled={
+              data.pagination.currentPage >= data.pagination.totalPages ||
+              isLoading
+            }
+            onClick={() => changePage(data.pagination.currentPage + 1)}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
       <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
         {isLoading
           ? // Mostrar esqueleto de carga mientras se cargan los datos
@@ -115,7 +153,7 @@ export default function TicketGridClient({
             ))}
       </div>
 
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
           Mostrando{" "}
           {data.pagination.currentPage * data.pagination.pageSize -
@@ -152,7 +190,7 @@ export default function TicketGridClient({
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
