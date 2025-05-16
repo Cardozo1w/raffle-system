@@ -8,18 +8,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 // Información de la rifa como un objeto configurable
 const raffleConfig = {
   id: "default",
-  title: "Gran Rifa Benéfica",
+  title: "Gran Rifa Benéfica de un Dron DJI Neo",
   description:
     "Participa en nuestra rifa benéfica y gana un increíble premio mientras apoyas una buena causa. Cada boleto tiene la misma oportunidad de ganar.",
-  price: "$50.00",
-  date: "31 de diciembre de 2024",
-  imageUrl: "/raffle-prize.png",
+  price: "$20.00",
+  date: "10 de Junio",
+  imageUrl: "/dji.jpg",
   totalTickets: 1000,
   pageSize: 100,
 }
 
-export default function Home({ searchParams }) {
-  const page = Number.parseInt(searchParams.page) || 1
+export default async function Home({ searchParams }: {searchParams: any}) {
+  const searchParamsValue = await searchParams
+  const page = Number.parseInt(searchParamsValue.page) || 1;
 
   return (
     <main className="container mx-auto py-8 px-4">

@@ -16,36 +16,45 @@ const raffleConfig = {
   totalTickets: 1000,
 }
 
-export default async function AdminPage({ searchParams }) {
+export default async function AdminPage({
+  searchParams: search,
+}: {
+  searchParams: any;
+}) {
   // Verificar autenticación
-  const isAuthenticated = await checkAuth()
+  const isAuthenticated = await checkAuth();
   if (!isAuthenticated) {
-    redirect("/admin/login")
+    redirect("/admin/login");
   }
 
-  const page = Number.parseInt(searchParams.page) || 1
-  const pageSize = 10
-  const filter = searchParams.filter || ""
+  const searchParams = await search;
 
-  const tickets = await getTickets(raffleConfig.id)
-  const soldTickets = tickets.filter((ticket) => ticket.sold)
-  const availableTickets = tickets.filter((ticket) => !ticket.sold)
+  const page = Number.parseInt(searchParams.page) || 1;
+  const pageSize = 10;
+  const filter = searchParams.filter || "";
+
+  const tickets = await getTickets(raffleConfig.id);
+  const soldTickets = tickets.filter((ticket) => ticket.sold);
+  const availableTickets = tickets.filter((ticket) => !ticket.sold);
 
   // Filtrar boletos vendidos
-  let filteredSoldTickets = soldTickets
+  let filteredSoldTickets = soldTickets;
   if (filter) {
     filteredSoldTickets = soldTickets.filter(
       (t) =>
         t.number.toString().includes(filter) ||
         (t.name && t.name.toLowerCase().includes(filter.toLowerCase())) ||
-        (t.phone && t.phone.includes(filter)),
-    )
+        (t.phone && t.phone.includes(filter))
+    );
   }
 
   // Paginar boletos vendidos
-  const totalPages = Math.ceil(filteredSoldTickets.length / pageSize)
-  const start = (page - 1) * pageSize
-  const paginatedSoldTickets = filteredSoldTickets.slice(start, start + pageSize)
+  const totalPages = Math.ceil(filteredSoldTickets.length / pageSize);
+  const start = (page - 1) * pageSize;
+  const paginatedSoldTickets = filteredSoldTickets.slice(
+    start,
+    start + pageSize
+  );
 
   return (
     <main className="container mx-auto py-8 px-4">
@@ -78,7 +87,9 @@ export default async function AdminPage({ searchParams }) {
             <CardTitle>Boletos Vendidos</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-green-600">{soldTickets.length}</p>
+            <p className="text-4xl font-bold text-green-600">
+              {soldTickets.length}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -86,7 +97,9 @@ export default async function AdminPage({ searchParams }) {
             <CardTitle>Boletos Disponibles</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-blue-600">{availableTickets.length}</p>
+            <p className="text-4xl font-bold text-blue-600">
+              {availableTickets.length}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -94,7 +107,9 @@ export default async function AdminPage({ searchParams }) {
       <Card>
         <CardHeader>
           <CardTitle>Boletos Vendidos</CardTitle>
-          <CardDescription>Administra todos los boletos vendidos</CardDescription>
+          <CardDescription>
+            Administra todos los boletos vendidos
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -122,14 +137,24 @@ export default async function AdminPage({ searchParams }) {
             {filteredSoldTickets.length > 0 && (
               <div className="flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">
-                  Mostrando {start + 1} a {Math.min(start + pageSize, filteredSoldTickets.length)} de{" "}
+                  Mostrando {start + 1} a{" "}
+                  {Math.min(start + pageSize, filteredSoldTickets.length)} de{" "}
                   {filteredSoldTickets.length} boletos vendidos
                 </div>
                 <div className="flex items-center gap-2">
                   <form>
                     <input type="hidden" name="filter" value={filter} />
-                    <input type="hidden" name="page" value={Math.max(1, page - 1)} />
-                    <Button variant="outline" size="sm" disabled={page <= 1} type="submit">
+                    <input
+                      type="hidden"
+                      name="page"
+                      value={Math.max(1, page - 1)}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={page <= 1}
+                      type="submit"
+                    >
                       Anterior
                     </Button>
                   </form>
@@ -138,8 +163,17 @@ export default async function AdminPage({ searchParams }) {
                   </span>
                   <form>
                     <input type="hidden" name="filter" value={filter} />
-                    <input type="hidden" name="page" value={Math.min(totalPages, page + 1)} />
-                    <Button variant="outline" size="sm" disabled={page >= totalPages || totalPages === 0} type="submit">
+                    <input
+                      type="hidden"
+                      name="page"
+                      value={Math.min(totalPages, page + 1)}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={page >= totalPages || totalPages === 0}
+                      type="submit"
+                    >
                       Siguiente
                     </Button>
                   </form>
@@ -150,10 +184,10 @@ export default async function AdminPage({ searchParams }) {
         </CardContent>
       </Card>
     </main>
-  )
+  );
 }
 
-function TicketTable({ tickets }) {
+function TicketTable({ tickets }: {tickets: any}) {
   return (
     <div className="rounded-md border">
       <Table>
@@ -167,7 +201,7 @@ function TicketTable({ tickets }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {tickets.map((ticket) => (
+          {tickets.map((ticket: any) => (
             <TableRow key={ticket.number}>
               <TableCell className="font-medium">{ticket.number}</TableCell>
               <TableCell>{ticket.name}</TableCell>

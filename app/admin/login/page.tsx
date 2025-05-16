@@ -14,7 +14,7 @@ export default function LoginPage() {
   const router = useRouter()
   const { toast } = useToast()
 
-  async function handleSubmit(event) {
+  async function handleSubmit(event: { preventDefault: () => void; target: HTMLFormElement | undefined }) {
     event.preventDefault()
     setLoading(true)
 
@@ -57,6 +57,7 @@ export default function LoginPage() {
           <CardDescription className="text-center">Ingresa tus credenciales para acceder al panel</CardDescription>
         </CardHeader>
         <CardContent>
+          {/* @ts-ignore */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="username">Usuario</Label>
