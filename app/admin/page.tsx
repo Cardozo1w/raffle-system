@@ -58,9 +58,9 @@ export default async function AdminPage({
           <Button asChild>
             <Link href="/admin/vender">Vender Boleto</Link>
           </Button>
-          <Button asChild variant="outline">
+          {/* <Button asChild variant="outline">
             <Link href="/admin/initialize">Inicializar Boletos</Link>
-          </Button>
+          </Button> */}
         </div>
       </div>
 
