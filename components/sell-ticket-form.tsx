@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { sellTicket, getTickets } from "@/lib/actions"
+import { sellTicket } from "@/lib/actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast"
 
 export default function SellTicketForm({ raffleId = "default" }) {
   const [loading, setLoading] = useState(false)
-  const [availableTickets, setAvailableTickets] = useState([])
+  const [tickets, setTickets] = useState([])
   const [selectedTicket, setSelectedTicket] = useState(null)
   const [searchValue, setSearchValue] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
@@ -18,17 +18,21 @@ export default function SellTicketForm({ raffleId = "default" }) {
   const router = useRouter()
   const ticketsPerPage = 100
 
-  // Cargar boletos disponibles
+  // Cargar todos los boletos (vendidos y disponibles)
   useEffect(() => {
     const loadTickets = async () => {
       try {
-        const tickets = await getTickets(raffleId)
-        setAvailableTickets(tickets.filter((t) => !t.sold))
+        // Usar la API para cargar los boletos
+        const response = await fetch(`/api/tickets?pageSize=1000&raffleId=${raffleId}`)
+        if (!response.ok) throw new Error("Error al cargar boletos")
+
+        const data = await response.json()
+        setTickets(data.tickets || [])
       } catch (error) {
         console.error("Error al cargar boletos:", error)
         toast({
           title: "Error",
-          description: "No se pudieron cargar los boletos disponibles",
+          description: "No se pudieron cargar los boletos",
           variant: "destructive",
         })
       }
@@ -37,9 +41,7 @@ export default function SellTicketForm({ raffleId = "default" }) {
   }, [raffleId, toast])
 
   // Filtrar boletos por búsqueda
-  const filteredTickets = searchValue
-    ? availableTickets.filter((t) => t.number.toString().includes(searchValue))
-    : availableTickets
+  const filteredTickets = searchValue ? tickets.filter((t) => t.number.toString().includes(searchValue)) : tickets
 
   // Paginar boletos
   const totalPages = Math.ceil(filteredTickets.length / ticketsPerPage)
@@ -113,13 +115,15 @@ export default function SellTicketForm({ raffleId = "default" }) {
             paginatedTickets.map((ticket) => (
               <div
                 key={ticket.number}
-                onClick={() => setSelectedTicket(ticket.number)}
+                onClick={() => !ticket.sold && setSelectedTicket(ticket.number)}
                 className={`
-                  aspect-square flex items-center justify-center rounded-md border text-sm font-bold cursor-pointer
+                  aspect-square flex items-center justify-center rounded-md border text-sm font-bold
                   ${
-                    selectedTicket === ticket.number
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-green-100 border-green-300 text-green-700 hover:bg-green-200"
+                    ticket.sold
+                      ? "bg-red-100 border-red-300 text-red-700 cursor-not-allowed"
+                      : selectedTicket === ticket.number
+                        ? "bg-primary text-primary-foreground cursor-pointer"
+                        : "bg-green-100 border-green-300 text-green-700 cursor-pointer hover:bg-green-200"
                   }
                 `}
               >
@@ -127,9 +131,7 @@ export default function SellTicketForm({ raffleId = "default" }) {
               </div>
             ))
           ) : (
-            <div className="col-span-10 py-8 text-center text-muted-foreground">
-              No se encontraron boletos disponibles
-            </div>
+            <div className="col-span-10 py-8 text-center text-muted-foreground">No se encontraron boletos</div>
           )}
         </div>
         <input type="hidden" name="ticketNumber" value={selectedTicket || ""} required />
